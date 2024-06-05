@@ -2,20 +2,18 @@ import { useState } from "react";
 
 const Statistics = ({ good, neutral, bad }) => {
   const all = good + neutral + bad;
+  if (all === 0) return <p>No feedback given</p>;
   const average = (good - bad) / all;
   const positive = good / all;
   return (
-    <section id="statistics">
-      <h1>statistics</h1>
-      <p>
-        good {good} <br />
-        neutral {neutral} <br />
-        bad {bad} <br />
-        all {all} <br />
-        average {average} <br />
-        positive {positive * 100}%
-      </p>
-    </section>
+    <p>
+      good {good} <br />
+      neutral {neutral} <br />
+      bad {bad} <br />
+      all {all} <br />
+      average {average} <br />
+      positive {positive * 100}%
+    </p>
   );
 };
 
@@ -37,7 +35,10 @@ const App = () => {
           bad
         </button>
       </section>
-      <Statistics good={good} neutral={neutral} bad={bad} />
+      <section id="statistics">
+        <h1>statistics</h1>
+        <Statistics good={good} neutral={neutral} bad={bad} />
+      </section>
     </div>
   );
 };
