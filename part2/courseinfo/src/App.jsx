@@ -1,10 +1,16 @@
+const Part = ({ name, exercises }) => {
+  return (
+    <p>
+      {name} {exercises}
+    </p>
+  );
+};
+
 const Content = ({ parts }) => {
   return (
     <>
       {parts.map((part) => (
-        <p key={part.id}>
-          {part.name} {part.exercises}
-        </p>
+        <Part name={part.name} exercises={part.exercises} key={part.id} />
       ))}
     </>
   );
