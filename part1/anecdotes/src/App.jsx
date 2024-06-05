@@ -1,5 +1,13 @@
 import { useState } from "react";
 
+//This function is so that I don't get the same random number twice. i.e. so that the anecdote does not remain the same when clicked next anecdote
+const findRandom = (low, high, already) => {
+  const randomNumber = Math.floor(low + Math.random() * (high - low + 1));
+  console.log(randomNumber);
+  if (randomNumber === already) findRandom(low, high, already);
+  return randomNumber;
+};
+
 const App = () => {
   const anecdotes = [
     "If it hurts, do it more often.",
@@ -14,7 +22,19 @@ const App = () => {
 
   const [selected, setSelected] = useState(0);
 
-  return <div>{anecdotes[selected]}</div>;
+  return (
+    <div>
+      <p>{anecdotes[selected]}</p>
+      <button
+        type="button"
+        onClick={() => {
+          setSelected(findRandom(0, anecdotes.length - 1, selected));
+        }}
+      >
+        next anecdote
+      </button>
+    </div>
+  );
 };
 
 export default App;
