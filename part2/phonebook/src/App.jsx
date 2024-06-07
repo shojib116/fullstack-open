@@ -82,14 +82,30 @@ const App = () => {
             person.name.toLowerCase().indexOf(filterTerm.toLowerCase()) !== -1
         );
 
+  const updateNumber = (id, newPerson) => {
+    if (
+      window.confirm(
+        `${newPerson.name} is already added to phonebook, replace the old number with new one?`
+      )
+    ) {
+      phonebook.update(id, newPerson).then((response) => {
+        setPersons(
+          persons.map((person) => (person.id !== id ? person : response.data))
+        );
+        setNewName(""), setNewNumber("");
+      });
+    }
+  };
+
   const addNewPerson = (event) => {
     event.preventDefault();
+    const newPerson = { name: newName, number: newNumber };
 
     const personExists = persons.find((person) => person.name === newName);
     if (personExists) {
-      return alert(`${newName} is already added to phonebook`);
+      return updateNumber(personExists.id, newPerson);
     }
-    const newPerson = { name: newName, number: newNumber };
+
     phonebook.create(newPerson).then((response) => {
       setPersons(persons.concat(response.data));
       setNewName("");
