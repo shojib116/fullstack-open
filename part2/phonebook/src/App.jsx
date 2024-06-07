@@ -19,7 +19,7 @@ const PersonForm = ({
   setNewName,
   newNumber,
   setNewNumber,
-  handleClick,
+  addNewPerson,
 }) => {
   return (
     <form>
@@ -35,7 +35,7 @@ const PersonForm = ({
         />
       </div>
       <div>
-        <button type="submit" onClick={handleClick}>
+        <button type="submit" onClick={addNewPerson}>
           add
         </button>
       </div>
@@ -43,19 +43,22 @@ const PersonForm = ({
   );
 };
 
-const Person = ({ person }) => {
+const Person = ({ person, deletePerson }) => {
   return (
     <div>
-      {person.name} {person.number}
+      {person.name} {person.number}{" "}
+      <button type="button" onClick={() => deletePerson(person.id)}>
+        delete
+      </button>
     </div>
   );
 };
 
-const Persons = ({ filteredpersons }) => {
+const Persons = ({ filteredpersons, deletePerson }) => {
   return (
     <div>
       {filteredpersons.map((person) => (
-        <Person person={person} key={person.id} />
+        <Person person={person} key={person.id} deletePerson={deletePerson} />
       ))}
     </div>
   );
@@ -79,7 +82,7 @@ const App = () => {
             person.name.toLowerCase().indexOf(filterTerm.toLowerCase()) !== -1
         );
 
-  const handleClick = (event) => {
+  const addNewPerson = (event) => {
     event.preventDefault();
 
     const personExists = persons.find((person) => person.name === newName);
@@ -93,6 +96,17 @@ const App = () => {
       setNewNumber("");
     });
   };
+
+  const deletePerson = (id) => {
+    if (window.confirm(`Delete ${persons[id - 1].name}?`)) {
+      phonebook
+        .deletePerson(id)
+        .then((response) =>
+          setPersons(persons.filter((person) => person.id !== id))
+        );
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -103,10 +117,10 @@ const App = () => {
         setNewName={setNewName}
         newNumber={newNumber}
         setNewNumber={setNewNumber}
-        handleClick={handleClick}
+        addNewPerson={addNewPerson}
       />
       <h3>Numbers</h3>
-      <Persons filteredpersons={filteredpersons} />
+      <Persons filteredpersons={filteredpersons} deletePerson={deletePerson} />
     </div>
   );
 };
