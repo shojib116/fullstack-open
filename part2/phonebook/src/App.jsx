@@ -88,15 +88,14 @@ const App = () => {
     if (personExists) {
       return alert(`${newName} is already added to phonebook`);
     }
-    setPersons(
-      persons.concat({
-        name: newName,
-        number: newNumber,
-        id: persons.length + 1,
-      })
-    );
-    setNewName("");
-    setNewNumber("");
+    const newPerson = { name: newName, number: newNumber };
+    axios
+      .post("http://172.25.20.171:3001/persons", newPerson)
+      .then((response) => {
+        setPersons(persons.concat(response.data));
+        setNewName("");
+        setNewNumber("");
+      });
   };
   return (
     <div>
