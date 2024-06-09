@@ -2,19 +2,23 @@ import axios from "axios";
 const baseUrl = "http://172.25.20.171:3001/persons";
 
 const getAll = () => {
-  return axios.get(baseUrl);
+  const request = axios.get(baseUrl);
+  return request.then((response) => response.data);
 };
 
 const create = (newPerson) => {
-  return axios.post(baseUrl, newPerson);
+  const request = axios.post(baseUrl, newPerson);
+  return request.then((response) => response.data);
 };
 
 const update = (id, newPerson) => {
-  return axios.put(`${baseUrl}/${id}`, newPerson);
+  const request = axios.put(`${baseUrl}/${id}`, newPerson);
+  return request.then((response) => response.data);
 };
 
 const deletePerson = (id) => {
-  return axios.delete(`${baseUrl}/${id}`);
+  const request = axios.delete(`${baseUrl}/${id}`);
+  return request.then((response) => response.data);
 };
 
 export default { getAll, create, update, deletePerson };
