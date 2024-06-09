@@ -2,12 +2,12 @@ import { useState, useEffect } from "react";
 import phonebook from "./services/phonebook";
 import "./index.css";
 
-const Notification = ({ message }) => {
+const Notification = ({ message, status }) => {
   if (message === null) {
     return null;
   }
 
-  return <div className="success">{message}</div>;
+  return <div className={status}>{message}</div>;
 };
 
 const Filter = ({ filterTerm, setFilterTerm }) => {
@@ -82,7 +82,10 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterTerm, setFilterTerm] = useState("");
-  const [message, setMessage] = useState(null);
+  const [notification, setNotification] = useState({
+    message: null,
+    status: null,
+  });
 
   const filteredpersons =
     filterTerm === ""
@@ -98,12 +101,28 @@ const App = () => {
         `${newPerson.name} is already added to phonebook, replace the old number with new one?`
       )
     ) {
-      phonebook.update(id, newPerson).then((returnedEntry) => {
-        setPersons(
-          persons.map((person) => (person.id !== id ? person : returnedEntry))
-        );
-        setNewName(""), setNewNumber("");
-      });
+      phonebook
+        .update(id, newPerson)
+        .then((returnedEntry) => {
+          setPersons(
+            persons.map((person) => (person.id !== id ? person : returnedEntry))
+          );
+          setNewName(""), setNewNumber("");
+        })
+        .catch(() => {
+          setNotification({
+            message: `Information of ${newPerson.name} has already been removed from server`,
+            status: "error",
+          });
+          setTimeout(
+            () =>
+              setNotification({
+                message: null,
+                status: null,
+              }),
+            5000
+          );
+        });
     }
   };
 
@@ -120,8 +139,18 @@ const App = () => {
       setPersons(persons.concat(returnedEntry));
       setNewName("");
       setNewNumber("");
-      setMessage(`Added ${returnedEntry.name}`);
-      setTimeout(() => setMessage(null), 5000);
+      setNotification({
+        message: `Added ${returnedEntry.name}`,
+        status: "success",
+      });
+      setTimeout(
+        () =>
+          setNotification({
+            message: null,
+            status: null,
+          }),
+        5000
+      );
     });
   };
 
@@ -136,7 +165,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification
+        message={notification.message}
+        status={notification.status}
+      />
       <Filter filterTerm={filterTerm} setFilterTerm={setFilterTerm} />
       <h3>add a new</h3>
       <PersonForm
