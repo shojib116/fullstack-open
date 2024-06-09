@@ -2,6 +2,19 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 const CountryView = ({ country }) => {
+  const [weatherData, setWeatherData] = useState(null);
+  const api_key = import.meta.env.VITE_SOME_KEY;
+  const lat = country.capitalInfo.latlng[0];
+  const lon = country.capitalInfo.latlng[1];
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${api_key}`
+      )
+      .then((response) => setWeatherData(response.data));
+  }, []);
+
   const languages = [];
   for (const key of Object.keys(country.languages)) {
     languages.push(country.languages[key]);
@@ -19,6 +32,17 @@ const CountryView = ({ country }) => {
         ))}
       </ul>
       <img src={country.flags.png} alt={country.flags.alt} />
+      {weatherData && (
+        <>
+          <h3>Weather in {country.capital}</h3>
+          <p>temperature {weatherData.main.temp} Celcius</p>
+          <img
+            src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+            alt={weatherData.weather[0].description}
+          />
+          <p>wind {weatherData.wind.speed} m/s</p>
+        </>
+      )}
     </div>
   );
 };
@@ -52,12 +76,12 @@ const Search = ({ searchTerm, handleTermChange, disabled }) => {
 };
 
 const Result = ({ searchTerm, countries }) => {
+  if (!searchTerm) return null;
+
   const filteredCountries = countries.filter(
     (country) =>
       country.name.common.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1
   );
-
-  if (!searchTerm) return null;
 
   if (filteredCountries.length === 0) return <p>No countries found</p>;
 
