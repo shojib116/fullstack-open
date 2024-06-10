@@ -1,5 +1,5 @@
 import axios from "axios";
-const baseUrl = "http://172.25.20.171:3001/persons";
+const baseUrl = "/api/persons/";
 
 const getAll = () => {
   const request = axios.get(baseUrl);
